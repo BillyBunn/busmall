@@ -6,18 +6,25 @@ var totalClicks = 0;
 var imgOne = document.getElementById('image-one');
 var imgTwo = document.getElementById('image-two');
 var imgThree = document.getElementById('image-three');
+var resultsList = document.getElementById('results');
 
 
 // IMG CONSTRUCTOR FUNCTION
 function Img(name) {
-  // images/sassy-goat.jpg
-  // this.fileExtension = this.src.split('.').pop(); //grabs file extension after '.'
-  this.filepath = `img/${name}`;
   this.name = name;
+  this.filepath = `img/${name}`;
+  this.fullName = this.name.split('.').shift().replace('-', ' ');
   this.views = 0;
   this.clicks = 0;
   allImgs.push(this);
 }
+
+Img.prototype.renderList = function () {
+  var liEl = document.createElement('li');
+  liEl.textContent = `${this.clicks} votes for the ${this.fullName}.`;
+  resultsList.appendChild(liEl);
+};
+
 
 // IMG INSTANCES
 new Img('bag.jpg');
@@ -46,28 +53,32 @@ new Img('wine-glass.jpg');
 function render() {
   getRandom();
   // console.log(randomOne, randomTwo, randomThree);
-  imgOne.src = allImgs[randomOne].filepath;
-  imgTwo.src = allImgs[randomTwo].filepath;
-  imgThree.src = allImgs[randomThree].filepath;
-  allImgs[randomOne].views++;
-  allImgs[randomTwo].views++;
-  allImgs[randomThree].views++;
+  imgOne.src = allImgs[randomArray[0]].filepath;
+  imgTwo.src = allImgs[randomArray[1]].filepath;
+  imgThree.src = allImgs[randomArray[2]].filepath;
+  allImgs[randomArray[0]].views++;
+  allImgs[randomArray[1]].views++;
+  allImgs[randomArray[2]].views++;
+  // imgPositionsArray.unshift(randomOne, randomTwo, randomThree);
+  // console.log(imgPositionsArray);
 }
 
 // GIVES YOU A RANDOM INDEX NUMBER FOR allImgs ARRAY
-var randomOne;
-var randomTwo;
-var randomThree;
-
+// https://stackoverflow.com/questions/40956717/how-to-addeventlistener-to-multiple-elements-in-a-single-line
+var prevRandomArray = [];
+var randomArray = [];
 function getRandom() {
-  randomOne = Math.floor(Math.random() * allImgs.length);
-  randomTwo = Math.floor(Math.random() * allImgs.length);
-  randomThree = Math.floor(Math.random() * allImgs.length);
-
-  if (randomOne === randomTwo || randomOne === randomThree || randomTwo === randomThree) {
-    getRandom();
+  randomArray = [];
+  while (randomArray.length < 3) {
+    var random = Math.floor(Math.random() * allImgs.length);
+    if (randomArray.indexOf(random) === -1 && prevRandomArray.indexOf(random) === -1) {
+      randomArray.unshift(random);
+    }
   }
-}
+  prevRandomArray = randomArray;
+  // console.log('randomArray',randomArray);
+  // console.log('prevRandomArray',prevRandomArray);
+};
 
 // CLICK EVENT LISTENERS
 imgOne.addEventListener('click', handleClickOne);
@@ -76,21 +87,24 @@ imgThree.addEventListener('click', handleClickThree);
 
 // REMOVES LISTENERS AFTER 25TH CLICK
 function removeLiseners() {
-if (totalClicks >= 25) {
+  if (totalClicks >= 25) {
     imgOne.removeEventListener('click', handleClickOne);
     imgTwo.removeEventListener('click', handleClickTwo);
     imgThree.removeEventListener('click', handleClickThree);
     console.log('removed click event listeners');
+    console.table(allImgs);
+
+    for (var i = 0; i < allImgs.length; i++) {
+      allImgs[i].renderList();
+    }
   }
 }
 
 // CLICK EVENT HANDLERS - ONE FOR EACH IMG POSITION
 function handleClickOne(event) {
   console.log(event.target);
-  allImgs[randomOne].clicks++;
+  allImgs[randomArray[0]].clicks++;
   totalClicks++;
-  // console.log(allImgs[randomOne].clicks);
-  // logClicks();
   console.log('total clicks:', totalClicks);
   removeLiseners();
   render();
@@ -98,10 +112,8 @@ function handleClickOne(event) {
 
 function handleClickTwo(event) {
   console.log(event.target);
-  allImgs[randomTwo].clicks++;
+  allImgs[randomArray[1]].clicks++;
   totalClicks++;
-  // console.log(allImgs[randomThree].clicks);
-  // logClicks();
   console.log('total clicks:', totalClicks);
   removeLiseners();
   render();
@@ -109,19 +121,11 @@ function handleClickTwo(event) {
 
 function handleClickThree(event) {
   console.log(event.target);
-  allImgs[randomThree].clicks++;
+  allImgs[randomArray[2]].clicks++;
   totalClicks++;
-  // console.log(allImgs[randomThree].clicks);
-  // logClicks();
   console.log('total clicks:', totalClicks);
   removeLiseners();
   render();
 }
 
-render();
-
-
-
-
-
-
+render(); 
