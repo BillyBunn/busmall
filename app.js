@@ -4,28 +4,23 @@
 var allImgs = [];
 var totalClicks = 0;
 var clickLimit = 25;
-var imgOne = document.getElementById('image-one');
-var imgTwo = document.getElementById('image-two');
-var imgThree = document.getElementById('image-three');
+var imgElOne = document.getElementById('image-one');
+var imgElTwo = document.getElementById('image-two');
+var imgElThree = document.getElementById('image-three');
 var resultsList = document.getElementById('results');
 var clicksLeft = document.getElementById('remaining');
-
 
 // IMG CONSTRUCTOR FUNCTION
 function Img(name) {
   this.name = name;
   this.filepath = `img/${name}`;
-  this.fullName = this.name.split('.').shift().replace('-', ' ');
+  this.alt = this.name.split('.').shift() // removes 'name' file extension 
+  this.title = this.alt
+  this.fullName = this.name.split('.').shift().replace('-', ' '); // removes '-' and replaces with ' '
   this.views = 0;
   this.clicks = 0;
   allImgs.push(this);
 }
-
-Img.prototype.renderList = function () {
-  var liEl = document.createElement('li');
-  liEl.textContent = `${this.clicks} votes for the ${this.fullName}.`;
-  resultsList.appendChild(liEl);
-};
 
 // IMG INSTANCES
 new Img('bag.jpg');
@@ -49,82 +44,80 @@ new Img('usb.gif');
 new Img('water-can.jpg');
 new Img('wine-glass.jpg');
 
+// PROTOTYPE TO RENDER RESULTS IN LIST
+Img.prototype.renderList = function () {
+  var liEl = document.createElement('li');
+  liEl.textContent = `${this.clicks} votes for the ${this.fullName}.`;
+  resultsList.appendChild(liEl);
+};
 
-// RENDER FUNCTION
-function render() {
+// FUNCTION THAT GENERATES 3 UNIQUE RANDOM NUMBERS, EXCLUDES PRIOR 3 GENERATED
+var randomArray = [];
+function getRandom() {
+  randomArray.splice(3, 3);
+  for (var i = 0; i < 3;) {
+    var random = Math.floor(Math.random() * allImgs.length);
+    if (!randomArray.includes(random)) {
+      randomArray.unshift(random);
+      i++;
+    }
+  }
+}
+
+// FUNCTION THAT RENDERS IMGS AT 3 RANDOM INDEXES
+function renderImgs() {
   getRandom();
-  imgOne.src = allImgs[randomArray[0]].filepath;
-  imgTwo.src = allImgs[randomArray[1]].filepath;
-  imgThree.src = allImgs[randomArray[2]].filepath;
+  imgElOne.src = allImgs[randomArray[0]].filepath;
+  imgElOne.alt = allImgs[randomArray[0]].alt;
+  imgElOne.title = allImgs[randomArray[0]].title;
+
+  imgElTwo.src = allImgs[randomArray[1]].filepath;
+  imgElTwo.alt = allImgs[randomArray[1]].alt;
+  imgElTwo.title = allImgs[randomArray[1]].title;
+
+  imgElThree.src = allImgs[randomArray[2]].filepath;
+  imgElThree.alt = allImgs[randomArray[2]].alt;
+  imgElThree.title = allImgs[randomArray[2]].title;
+
   allImgs[randomArray[0]].views++;
   allImgs[randomArray[1]].views++;
   allImgs[randomArray[2]].views++;
 
   clicksLeft.innerHTML = `<span>${clickLimit - totalClicks}</span> votes remaining`;
-
 }
 
-// GIVES YOU A RANDOM INDEX NUMBER FOR allImgs ARRAY
-// https://stackoverflow.com/questions/40956717/how-to-addeventlistener-to-multiple-elements-in-a-single-line
-var prevRandomArray = [];
-var randomArray = [];
-function getRandom() {
-  randomArray = [];
-  while (randomArray.length < 3) {
-    var random = Math.floor(Math.random() * allImgs.length);
-    if (randomArray.indexOf(random) === -1 && prevRandomArray.indexOf(random) === -1) {
-      randomArray.unshift(random);
+// CLICK EVENT HANDLER
+function handleClick(event) {
+  totalClicks++;
+  console.log('total clicks:', totalClicks);
+  console.log(event.target);
+  for (var i = 0; i < allImgs.length; i++) {
+    if (event.target.alt === allImgs[i].alt) {
+      allImgs[i].clicks++;
+      renderImgs();
+      break;
     }
   }
-  prevRandomArray = randomArray;
+  removeListeners();
 }
 
 // CLICK EVENT LISTENERS
-imgOne.addEventListener('click', handleClickOne);
-imgTwo.addEventListener('click', handleClickTwo);
-imgThree.addEventListener('click', handleClickThree);
+imgElOne.addEventListener('click', handleClick);
+imgElTwo.addEventListener('click', handleClick);
+imgElThree.addEventListener('click', handleClick);
 
-// REMOVES LISTENERS AFTER 25TH CLICK
-function removeLiseners() {
+// REMOVES EVENT LISTENERS AFTER 25TH CLICK
+function removeListeners() {
   if (totalClicks >= clickLimit) {
-    imgOne.removeEventListener('click', handleClickOne);
-    imgTwo.removeEventListener('click', handleClickTwo);
-    imgThree.removeEventListener('click', handleClickThree);
+    imgElOne.removeEventListener('click', handleClick);
+    imgElTwo.removeEventListener('click', handleClick);
+    imgElThree.removeEventListener('click', handleClick);
     console.log('removed click event listeners');
     console.table(allImgs);
-
     for (var i = 0; i < allImgs.length; i++) {
       allImgs[i].renderList();
     }
   }
 }
 
-// CLICK EVENT HANDLERS - ONE FOR EACH IMG POSITION
-function handleClickOne(event) {
-  console.log(event.target);
-  allImgs[randomArray[0]].clicks++;
-  totalClicks++;
-  console.log('total clicks:', totalClicks);
-  removeLiseners();
-  render();
-}
-
-function handleClickTwo(event) {
-  console.log(event.target);
-  allImgs[randomArray[1]].clicks++;
-  totalClicks++;
-  console.log('total clicks:', totalClicks);
-  removeLiseners();
-  render();
-}
-
-function handleClickThree(event) {
-  console.log(event.target);
-  allImgs[randomArray[2]].clicks++;
-  totalClicks++;
-  console.log('total clicks:', totalClicks);
-  removeLiseners();
-  render();
-}
-
-render(); 
+renderImgs(); 
