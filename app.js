@@ -48,6 +48,9 @@ function render() {
   imgOne.src = allImgs[randomOne].filepath;
   imgTwo.src = allImgs[randomTwo].filepath;
   imgThree.src = allImgs[randomThree].filepath;
+  allImgs[randomOne].views++;
+  allImgs[randomTwo].views++;
+  allImgs[randomThree].views++;
 }
 
 // console.table(allImgs);
@@ -66,6 +69,16 @@ function getRandom() {
   if (randomOne === randomTwo || randomOne === randomThree || randomTwo === randomThree) {
     getRandom();
   }
+}
+
+imgOne.addEventListener('click', handleClick);
+imgTwo.addEventListener('click', handleClick);
+imgThree.addEventListener('click', handleClick);
+
+
+function handleClick(event) {
+  console.log(event.target);
+  render();
 }
 
 
