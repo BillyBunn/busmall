@@ -7,6 +7,7 @@ var clickLimit = 25;
 var imgElOne = document.getElementById('image-one');
 var imgElTwo = document.getElementById('image-two');
 var imgElThree = document.getElementById('image-three');
+var imgEls = [imgElOne, imgElTwo, imgElThree];
 var resultsList = document.getElementById('results');
 var clicksLeft = document.getElementById('remaining');
 
@@ -64,25 +65,15 @@ function getRandom() {
   }
 }
 
-// FUNCTION THAT RENDERS IMGS AT 3 RANDOM INDEXES
+// FUNCTION THAT RENDERS IMGS AT 3 RANDOM INDEXES from allImgs[]
 function renderImgs() {
   getRandom();
-  imgElOne.src = allImgs[randomArray[0]].filepath;
-  imgElOne.alt = allImgs[randomArray[0]].alt;
-  imgElOne.title = allImgs[randomArray[0]].title;
-
-  imgElTwo.src = allImgs[randomArray[1]].filepath;
-  imgElTwo.alt = allImgs[randomArray[1]].alt;
-  imgElTwo.title = allImgs[randomArray[1]].title;
-
-  imgElThree.src = allImgs[randomArray[2]].filepath;
-  imgElThree.alt = allImgs[randomArray[2]].alt;
-  imgElThree.title = allImgs[randomArray[2]].title;
-
-  allImgs[randomArray[0]].views++;
-  allImgs[randomArray[1]].views++;
-  allImgs[randomArray[2]].views++;
-
+  for (var i = 0; i < 3; i++) {
+    imgEls[i].src = allImgs[randomArray[i]].filepath;
+    imgEls[i].alt = allImgs[randomArray[i]].alt;
+    imgEls[i].title = allImgs[randomArray[i]].title;
+    allImgs[randomArray[i]].views++;
+  }
   clicksLeft.innerHTML = `<span>${clickLimit - totalClicks}</span> votes remaining`;
 }
 
