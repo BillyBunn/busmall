@@ -7,9 +7,6 @@ white:  #ffffff
 black:  #222222
 grey:   #7A7A7A
 red:    #E6615E
-
-
-
 */
 
 html, body {
@@ -22,7 +19,13 @@ body {
     font-family: 'Roboto', sans-serif;
     line-height: 1.5;
     font-size: 2vw;
+    display: flex;
+    flex-direction: column;
 }
+
+content {
+    flex: 1 0 auto;
+  }
 
 h1 {
     font-family: 'Work Sans', sans-serif;
@@ -34,43 +37,24 @@ p {
     text-align: center;
 }
 
+/* ---------------------------------------------------------------------------------------------------- */
+/* Photo gallery styles */
+
 section {
-    background: #7A7A7A;
-    padding: 10px;
-    margin: 30px auto;
-    border-radius: 7px;
-
-}
-
-section ul {
-    background: #ffffff;
-    padding: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    min-width: 0;
-    border-radius: 7px;
-
-}
-
-section li {
+    border: 3px solid #7A7A7A;
     background: #E6615E;
+    margin: 30px 2.5vw;
+    border-radius: 7px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding: 10px 10px;
-    border-radius: 10px;
-    margin: 0px 5px;
-
-
 }
 
 section img {
-    width: 450px;
-    max-width: 100%; 
-    max-height: 450px; 
-    /* padding: 5px; */
+    max-width: 25vw; 
+    max-height: 25vw;
+    margin: 2.5vw 2.5vw;
     border: 2px solid #7A7A7A;
     border-radius: 15px;
     transition: 350ms;
@@ -79,4 +63,45 @@ section img {
 section img:hover {
     filter: grayscale(100%) blur(2px);
     cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+/* Results list styles */
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    margin: 0px auto 30px auto;
+  }
+   
+  li {
+    border-bottom: 1px solid #7A7A7A;
+  }
+   
+  li:last-child {
+    border: none;
+  }
+   
+  li {
+    text-decoration: none;
+    color: #ffff;
+    display: block;
+    width: 30vw;
+    margin: 0px auto;
+    padding-left: 2.5vw;
+    transition: font-size 0.3s ease, background-color 0.3s ease;
+  }
+   
+  li:hover {
+    font-size: 2.25vw;
+    color: #E6615E;
+  }
+
+/* ---------------------------------------------------------------------------------------------------- */
+/* Footer styles */
+
+footer {
+    flex-shrink: 0;
+    font-size: 1.5vw;
 }

@@ -8,7 +8,6 @@ var imgTwo = document.getElementById('image-two');
 var imgThree = document.getElementById('image-three');
 var resultsList = document.getElementById('results');
 
-
 // IMG CONSTRUCTOR FUNCTION
 function Img(name) {
   this.name = name;
@@ -24,7 +23,6 @@ Img.prototype.renderList = function () {
   liEl.textContent = `${this.clicks} votes for the ${this.fullName}.`;
   resultsList.appendChild(liEl);
 };
-
 
 // IMG INSTANCES
 new Img('bag.jpg');
@@ -52,15 +50,12 @@ new Img('wine-glass.jpg');
 // RENDER FUNCTION
 function render() {
   getRandom();
-  // console.log(randomOne, randomTwo, randomThree);
   imgOne.src = allImgs[randomArray[0]].filepath;
   imgTwo.src = allImgs[randomArray[1]].filepath;
   imgThree.src = allImgs[randomArray[2]].filepath;
   allImgs[randomArray[0]].views++;
   allImgs[randomArray[1]].views++;
   allImgs[randomArray[2]].views++;
-  // imgPositionsArray.unshift(randomOne, randomTwo, randomThree);
-  // console.log(imgPositionsArray);
 }
 
 // GIVES YOU A RANDOM INDEX NUMBER FOR allImgs ARRAY
@@ -76,9 +71,7 @@ function getRandom() {
     }
   }
   prevRandomArray = randomArray;
-  // console.log('randomArray',randomArray);
-  // console.log('prevRandomArray',prevRandomArray);
-};
+}
 
 // CLICK EVENT LISTENERS
 imgOne.addEventListener('click', handleClickOne);
