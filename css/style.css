@@ -68,6 +68,16 @@ section img:hover {
 /* ---------------------------------------------------------------------------------------------------- */
 /* Results list styles */
 
+main p {
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+
+main p span {
+    color: #E6615E;
+    font-weight: bold;
+}
+
 ul {
     list-style-type: none;
     margin: 0;

@@ -3,10 +3,13 @@
 // GLOBAL VARIABLES
 var allImgs = [];
 var totalClicks = 0;
+var clickLimit = 25;
 var imgOne = document.getElementById('image-one');
 var imgTwo = document.getElementById('image-two');
 var imgThree = document.getElementById('image-three');
 var resultsList = document.getElementById('results');
+var clicksLeft = document.getElementById('remaining');
+
 
 // IMG CONSTRUCTOR FUNCTION
 function Img(name) {
@@ -56,6 +59,9 @@ function render() {
   allImgs[randomArray[0]].views++;
   allImgs[randomArray[1]].views++;
   allImgs[randomArray[2]].views++;
+
+  clicksLeft.innerHTML = `<span>${clickLimit - totalClicks}</span> votes remaining`;
+
 }
 
 // GIVES YOU A RANDOM INDEX NUMBER FOR allImgs ARRAY
@@ -80,7 +86,7 @@ imgThree.addEventListener('click', handleClickThree);
 
 // REMOVES LISTENERS AFTER 25TH CLICK
 function removeLiseners() {
-  if (totalClicks >= 25) {
+  if (totalClicks >= clickLimit) {
     imgOne.removeEventListener('click', handleClickOne);
     imgTwo.removeEventListener('click', handleClickTwo);
     imgThree.removeEventListener('click', handleClickThree);
