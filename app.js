@@ -43,12 +43,14 @@ new Img('wine-glass.jpg');
 
 // RENDER FUNCTION
 function render() {
-  imgOne.src = allImgs[0].filepath;
-  imgTwo.src = allImgs[1].filepath;
-  imgThree.src = allImgs[2].filepath;
+  getRandom();
+  console.log(randomOne, randomTwo, randomThree);
+  imgOne.src = allImgs[randomOne].filepath;
+  imgTwo.src = allImgs[randomTwo].filepath;
+  imgThree.src = allImgs[randomThree].filepath;
 }
 
-console.table(allImgs);
+// console.table(allImgs);
 render();
 
 // GIVES YOU A RANDOM INDEX NUMBER FOR allImgs ARRAY
@@ -61,14 +63,10 @@ function getRandom() {
   randomTwo = Math.floor(Math.random() * allImgs.length);
   randomThree = Math.floor(Math.random() * allImgs.length);
 
-  if (randomTwo === randomOne && randomThree === randomTwo) {
+  if (randomOne === randomTwo || randomOne === randomThree || randomTwo === randomThree) {
     getRandom();
   }
-  
-  console.log(randomOne, randomTwo, randomThree);
 }
-
-
 
 
 
