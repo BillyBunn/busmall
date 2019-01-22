@@ -48,10 +48,25 @@ function render() {
   imgThree.src = allImgs[2].filepath;
 }
 
+console.table(allImgs);
 render();
 
+// GIVES YOU A RANDOM INDEX NUMBER FOR allImgs ARRAY
+var randomOne;
+var randomTwo;
+var randomThree;
 
+function getRandom() {
+  randomOne = Math.floor(Math.random() * allImgs.length);
+  randomTwo = Math.floor(Math.random() * allImgs.length);
+  randomThree = Math.floor(Math.random() * allImgs.length);
 
+  if (randomTwo === randomOne && randomThree === randomTwo) {
+    getRandom();
+  }
+  
+  console.log(randomOne, randomTwo, randomThree);
+}
 
 
 
