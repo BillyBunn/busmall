@@ -11,6 +11,8 @@ var rightImgEl = document.getElementById('right');
 var allImgEls = [leftImgEl, centerImgEl, rightImgEl];
 var resultsList = document.getElementById('results');
 var clicksLeft = document.getElementById('remaining');
+var canvasEl = document.getElementById("results-chart").getContext('2d');
+
 
 // OBJECT CONSTRUCTOR VARIABLES
 Image.fileNames = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
@@ -117,10 +119,8 @@ function updateChartArrays() {
 // BUILDS CHART
 function drawChart() {
   console.log('ran drawChart()');
-
-  var canvasEl = document.getElementById("myChart").getContext('2d');
   updateChartArrays();
-  var myChart = new Chart(canvasEl, {
+  var resultsChart = new Chart(canvasEl, {
     type: 'bar',
     data: {
       labels: Image.titles,
