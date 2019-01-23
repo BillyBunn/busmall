@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto|Work+Sans" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
 </head>
 
 <body>
@@ -17,13 +18,17 @@
 
         <main>
 
-            <section>
+            <section id="gallery">
                 <img id="image-one" src="http://placehold.it/500x500" alt="" title="" />
                 <img id="image-two" src="http://placehold.it/500x500" alt="" title="" />
                 <img id="image-three" src="http://placehold.it/500x500" alt="" title="" />
             </section>
 
             <p id="remaining"></p>
+
+            <div class="chart-container">
+                <canvas id="myChart" ></canvas>
+            </div>
 
             <ul id="results"></ul>
 

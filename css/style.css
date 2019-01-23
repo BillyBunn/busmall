@@ -41,6 +41,9 @@ p {
 /* Photo gallery styles */
 
 section {
+    color: #222222;
+    font-weight: bold;
+    font-size: 3vw;
     border: 3px solid #7A7A7A;
     background: #E6615E;
     margin: 30px 2.5vw;
@@ -49,6 +52,7 @@ section {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    min-height: 20vh;
 }
 
 section img {
@@ -63,6 +67,25 @@ section img {
 section img:hover {
     filter: grayscale(100%) blur(2px);
     cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+/* Canvas styles */
+
+.chart-container {
+    position: relative;
+    height:80vw; 
+    width:90vw;
+    margin: 0px auto;
+    text-align: center;
+
+}
+
+canvas {
+    background: #222222;
+    /* display: block; */
+    /* margin: 0px auto; */
+    /* border: 2px solid #E6615E; */
 }
 
 /* ---------------------------------------------------------------------------------------------------- */
