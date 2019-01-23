@@ -1,150 +1,133 @@
 'use strict';
 
-// GLOBAL VARIABLES
-var allImgs = [];
-var totalClicks = 0;
-var clickLimit = 25;
-var imgElOne = document.getElementById('image-one');
-var imgElTwo = document.getElementById('image-two');
-var imgElThree = document.getElementById('image-three');
-var imgEls = [imgElOne, imgElTwo, imgElThree];
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// DATA
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// DOM ACCESS VARIABLES
+var leftImgEl = document.getElementById('left');
+var centerImgEl = document.getElementById('center');
+var rightImgEl = document.getElementById('right');
+var allImgEls = [leftImgEl, centerImgEl, rightImgEl];
 var resultsList = document.getElementById('results');
 var clicksLeft = document.getElementById('remaining');
 
-// IMG CONSTRUCTOR FUNCTION
-function Img(name) {
-  this.name = name;
-  this.filepath = `img/${name}`;
-  this.alt = this.name.split('.').shift() // removes 'name' file extension 
-  this.title = this.alt
-  this.fullName = this.name.split('.').shift().replace('-', ' '); // removes '-' and replaces with ' '
+// OBJECT CONSTRUCTOR VARIABLES
+Image.fileNames = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
+Image.allImages = [];
+Image.randomArray = [];
+Image.totalClicks = 0;
+Image.clickLimit = 25;
+Image.titles = []; // for chart.js
+Image.clicks = []; // for chart.js
+
+// OBJECT CONSTRUCTOR
+function Image(fileName) {
+  this.fileName = fileName;
+  this.filepath = `img/${fileName}`;
+  this.name = this.fileName.split('.').shift(); // removes 'fileName' file extension 
+  this.alt = this.name;
+  this.title = this.name;
+  this.writtenName = this.name.split('.').shift().replace('-', ' '); // removes '-' and replaces with ' '
   this.views = 0;
   this.clicks = 0;
-  allImgs.push(this);
+  Image.allImages.push(this);
 }
-
-// IMG INSTANCES
-new Img('bag.jpg');
-new Img('banana.jpg');
-new Img('bathroom.jpg');
-new Img('boots.jpg');
-new Img('breakfast.jpg');
-new Img('bubblegum.jpg');
-new Img('chair.jpg');
-new Img('cthulhu.jpg');
-new Img('dog-duck.jpg');
-new Img('dragon.jpg');
-new Img('pen.jpg');
-new Img('pet-sweep.jpg');
-new Img('scissors.jpg');
-new Img('shark.jpg');
-new Img('sweep.jpg');
-new Img('tauntaun.jpg');
-new Img('unicorn.jpg');
-new Img('usb.gif');
-new Img('water-can.jpg');
-new Img('wine-glass.jpg');
-
-// PROTOTYPE TO RENDER RESULTS IN LIST
-Img.prototype.renderList = function () {
+// OBJECT CONSTRUCTOR PROTOTYPES
+Image.prototype.renderList = function () { // Renders voting results in an unordered list
   var liEl = document.createElement('li');
-  liEl.textContent = `${this.clicks} votes for the ${this.fullName}.`;
+  liEl.textContent = `${this.clicks} votes for the ${this.writtenName}.`;
   resultsList.appendChild(liEl);
 };
 
-// FUNCTION THAT GENERATES 3 UNIQUE RANDOM NUMBERS, EXCLUDES PRIOR 3 GENERATED
-var randomArray = [];
+// OBJECT INSTANCES
+for (var i = 0; i < Image.fileNames.length; i++) {
+  new Image(Image.fileNames[i]);
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// FUNCTION DECLARATIONS
+// Ordered with a stepdown approach. Higher level functions are on top and lower levels below.
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// CLICK EVENT HANDLER
+function handleClick(event) {
+  Image.totalClicks++;
+  console.log('total clicks:', Image.totalClicks);
+  // console.log(event.target);
+  for (var i = 0; i < Image.allImages.length; i++) {
+    if (event.target.alt === Image.allImages[i].alt) {
+      Image.allImages[i].clicks++;
+      renderImages();
+      break;
+    }
+  }
+  if (Image.totalClicks >= Image.clickLimit) {
+    console.table(Image.allImages);
+    removeListeners();
+    renderCompleted();
+    drawChart();
+  }
+}
+
+// RENDERS IMAGES
+function renderImages() {
+  getRandom(); // adds 3 random numbers to beginning of Image.randomArray
+  for (var i = 0; i < allImgEls.length; i++) { // loops through DOM img elements. assigns src, alt, and title
+    allImgEls[i].src = Image.allImages[Image.randomArray[i]].filepath;
+    allImgEls[i].alt = Image.allImages[Image.randomArray[i]].alt;
+    allImgEls[i].title = Image.allImages[Image.randomArray[i]].title;
+    Image.allImages[Image.randomArray[i]].views++;
+  }
+  clicksLeft.innerHTML = `<span>${Image.clickLimit - Image.totalClicks}</span> votes remaining`; // updates 'remaining votes' on page
+}
+
+// RENDERS 'VOTING COMPLETED' CONTENT
+function renderCompleted() {
+  console.log('ran renderCompleted()');
+  document.getElementById("gallery").innerHTML = "COMPLETED"; // replaces img elements with message
+  clicksLeft.innerHTML = `<span>results<span>`; // replaces remaing clicks counter
+  clicksLeft.style.marginTop = "30px";
+  clicksLeft.style.fontSize = "3vw";
+}
+
+// GENERATES 3 UNIQUE RANDOM NUMBERS, EXCLUDING PREVIOUS 3
 function getRandom() {
-  randomArray.splice(3, 3);
+  Image.randomArray.splice(3, 3);
   for (var i = 0; i < 3;) {
-    var random = Math.floor(Math.random() * allImgs.length);
-    if (!randomArray.includes(random)) {
-      randomArray.unshift(random);
+    var random = Math.floor(Math.random() * Image.allImages.length);
+    if (!Image.randomArray.includes(random)) {
+      Image.randomArray.unshift(random);
       i++;
     }
   }
 }
 
-// FUNCTION THAT RENDERS IMGS AT 3 RANDOM INDEXES from allImgs[]
-function renderImgs() {
-  getRandom();
-  for (var i = 0; i < 3; i++) {
-    imgEls[i].src = allImgs[randomArray[i]].filepath;
-    imgEls[i].alt = allImgs[randomArray[i]].alt;
-    imgEls[i].title = allImgs[randomArray[i]].title;
-    allImgs[randomArray[i]].views++;
-  }
-  clicksLeft.innerHTML = `<span>${clickLimit - totalClicks}</span> votes remaining`;
-}
-
-// CLICK EVENT HANDLER
-function handleClick(event) {
-  totalClicks++;
-  console.log('total clicks:', totalClicks);
-  console.log(event.target);
-  for (var i = 0; i < allImgs.length; i++) {
-    if (event.target.alt === allImgs[i].alt) {
-      allImgs[i].clicks++;
-      renderImgs();
-      break;
-    }
-  }
-  removeListeners();
-}
-
-// CLICK EVENT LISTENERS
-imgElOne.addEventListener('click', handleClick);
-imgElTwo.addEventListener('click', handleClick);
-imgElThree.addEventListener('click', handleClick);
-
-// REMOVES EVENT LISTENERS AFTER 25TH CLICK
-function removeListeners() {
-  if (totalClicks >= clickLimit) {
-    imgElOne.removeEventListener('click', handleClick);
-    imgElTwo.removeEventListener('click', handleClick);
-    imgElThree.removeEventListener('click', handleClick);
-    console.log('removed click event listeners');
-    console.table(allImgs);
-    // for (var i = 0; i < allImgs.length; i++) {
-    //   allImgs[i].renderList();
-    // }
-    document.getElementById("gallery").innerHTML = "COMPLETED";
-    clicksLeft.innerHTML = `<span>results<span>`;
-    clicksLeft.style.marginTop = "30px";
-    clicksLeft.style.fontSize = "3vw";
-
-    updateChartArrays();
-    drawChart();
-  }
-}
-
-/* ---------------------------------------------------------------------------------------------------- */
-// CHART.JS INTEGRATION
-/* ---------------------------------------------------------------------------------------------------- */
-
-var titles = [];
-var clicks = [];
-Chart.defaults.global.defaultFontColor = '#ffffff';
-Chart.defaults.global.defaultFontFamily = '"Roboto", sans-serif';
-Chart.defaults.global.defaultFontSize = 14;
-
+// UPDATES CHART DATA
 function updateChartArrays() {
-  for (var i = 0; i < allImgs.length; i++) {
-    titles[i] = allImgs[i].fullName;
-    clicks[i] = allImgs[i].clicks;
+  Chart.defaults.global.defaultFontColor = '#ffffff';
+  Chart.defaults.global.defaultFontFamily = '"Roboto", sans-serif';
+  Chart.defaults.global.defaultFontSize = 14;
+  for (var i = 0; i < Image.allImages.length; i++) {
+    Image.titles[i] = Image.allImages[i].writtenName;
+    Image.clicks[i] = Image.allImages[i].clicks;
   }
 }
 
+// BUILDS CHART
 function drawChart() {
+  console.log('ran drawChart()');
+
   var canvasEl = document.getElementById("myChart").getContext('2d');
+  updateChartArrays();
   var myChart = new Chart(canvasEl, {
     type: 'bar',
     data: {
-      labels: titles,
+      labels: Image.titles,
       datasets: [{
         label: '# of Votes',
-        data: clicks,
-        backgroundColor: [
+        data: Image.clicks,
+        backgroundColor: [ // Chart.js gradient colors created with help from a Code Fellows 201 project: http://respekt.us/index.html
           '#e5615e',
           '#db5d5b',
           '#d15a58',
@@ -198,4 +181,22 @@ function drawChart() {
   });
 }
 
-renderImgs(); 
+// REMOVES EVENT LISTENERS
+function removeListeners() {
+  console.log('ran removeListeners()');
+  leftImgEl.removeEventListener('click', handleClick);
+  centerImgEl.removeEventListener('click', handleClick);
+  rightImgEl.removeEventListener('click', handleClick);
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// FUNCTION INVOCATIONS
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// ON PAGE LOAD
+renderImages();
+
+// CLICK EVENT LISTENERS
+leftImgEl.addEventListener('click', handleClick);
+centerImgEl.addEventListener('click', handleClick);
+rightImgEl.addEventListener('click', handleClick);
