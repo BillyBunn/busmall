@@ -11,10 +11,12 @@ var rightImgEl = document.getElementById('right');
 var allImgEls = [leftImgEl, centerImgEl, rightImgEl];
 var resultsList = document.getElementById('results');
 var clicksLeft = document.getElementById('remaining');
+var canvasEl = document.getElementById("results-chart").getContext('2d');
 
 // OBJECT CONSTRUCTOR VARIABLES
 Image.fileNames = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 Image.allImages = [];
+Image.parsedImages = JSON.parse(localStorage.getItem('userResults'));
 Image.randomArray = [];
 Image.totalClicks = 0;
 Image.clickLimit = 25;
@@ -41,8 +43,11 @@ Image.prototype.renderList = function () { // Renders voting results in an unord
 };
 
 // OBJECT INSTANCES
-for (var i = 0; i < Image.fileNames.length; i++) {
-  new Image(Image.fileNames[i]);
+function makeInstances() {
+  for (var i = 0; i < Image.fileNames.length; i++) {
+    new Image(Image.fileNames[i]);
+  }
+  console.log(`constructed ${Image.fileNames.length} new Image instances`);
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -67,6 +72,7 @@ function handleClick(event) {
     removeListeners();
     renderCompleted();
     drawChart();
+    saveState();
   }
 }
 
@@ -114,13 +120,11 @@ function updateChartArrays() {
   }
 }
 
-// BUILDS CHART
+// RENDERS CHART
 function drawChart() {
   console.log('ran drawChart()');
-
-  var canvasEl = document.getElementById("myChart").getContext('2d');
   updateChartArrays();
-  var myChart = new Chart(canvasEl, {
+  var resultsChart = new Chart(canvasEl, {
     type: 'bar',
     data: {
       labels: Image.titles,
@@ -181,6 +185,11 @@ function drawChart() {
   });
 }
 
+// SAVES RESULTS TO LOCAL DATA
+function saveState() {
+  localStorage.setItem('userResults', JSON.stringify(Image.allImages));
+}
+
 // REMOVES EVENT LISTENERS
 function removeListeners() {
   console.log('ran removeListeners()');
@@ -193,7 +202,10 @@ function removeListeners() {
 // FUNCTION INVOCATIONS
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-// ON PAGE LOAD
+// CHECKS STATE - if no local data exists, makes new instances. if it exists, stores local data in object array
+(!Image.parsedImages) ? makeInstances() : Image.allImages = Image.parsedImages;
+
+// RENDERS STARTING IMAGES (BEFORE 1ST CLICK)
 renderImages();
 
 // CLICK EVENT LISTENERS
