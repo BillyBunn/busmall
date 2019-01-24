@@ -16,14 +16,12 @@ var canvasEl = document.getElementById("results-chart").getContext('2d');
 // OBJECT CONSTRUCTOR VARIABLES
 Image.fileNames = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 Image.allImages = [];
+Image.parsedImages = JSON.parse(localStorage.getItem('userResults'));
 Image.randomArray = [];
 Image.totalClicks = 0;
 Image.clickLimit = 25;
 Image.titles = []; // for chart.js
 Image.clicks = []; // for chart.js
-
-Image.parsedImages = JSON.parse(localStorage.getItem('userResults'));
-// Image.parsedImages = JSON.parse(localStorage.getItem('userResults'));
 
 // OBJECT CONSTRUCTOR
 function Image(fileName) {
@@ -49,27 +47,13 @@ function makeInstances() {
   for (var i = 0; i < Image.fileNames.length; i++) {
     new Image(Image.fileNames[i]);
   }
+  console.log(`constructed ${Image.fileNames.length} new Image instances`);
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // FUNCTION DECLARATIONS
 // Ordered with a stepdown approach. Higher level functions are on top and lower levels below.
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// CHECKS IF THERE IS LOCAL DATA WITH PREVIOUS RESULTS
-function getState() {
-  if (Image.parsedImages === null) {
-    console.log('Image.parsedImages is null');
-    makeInstances();
-    console.log('made instances');
-    // Image.allImages = [];
-  } else {
-    console.log('Image.parsedImages is NOT null');
-    // makeInstances();
-    Image.allImages = Image.parsedImages;
-    console.log('made allImages = parsedImags');
-  }
-}
 
 // CLICK EVENT HANDLER
 function handleClick(event) {
@@ -218,8 +202,10 @@ function removeListeners() {
 // FUNCTION INVOCATIONS
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-// ON PAGE LOAD
-getState();
+// CHECKS STATE - if no local data exists, makes new instances. if it exists, stores local data in object array
+(!Image.parsedImages) ? makeInstances() : Image.allImages = Image.parsedImages;
+
+// RENDERS STARTING IMAGES (BEFORE 1ST CLICK)
 renderImages();
 
 // CLICK EVENT LISTENERS
