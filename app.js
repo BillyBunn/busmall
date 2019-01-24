@@ -13,7 +13,6 @@ var resultsList = document.getElementById('results');
 var clicksLeft = document.getElementById('remaining');
 var canvasEl = document.getElementById("results-chart").getContext('2d');
 
-
 // OBJECT CONSTRUCTOR VARIABLES
 Image.fileNames = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 Image.allImages = [];
@@ -22,6 +21,9 @@ Image.totalClicks = 0;
 Image.clickLimit = 25;
 Image.titles = []; // for chart.js
 Image.clicks = []; // for chart.js
+
+Image.parsedImages = JSON.parse(localStorage.getItem('userResults'));
+// Image.parsedImages = JSON.parse(localStorage.getItem('userResults'));
 
 // OBJECT CONSTRUCTOR
 function Image(fileName) {
@@ -43,14 +45,31 @@ Image.prototype.renderList = function () { // Renders voting results in an unord
 };
 
 // OBJECT INSTANCES
-for (var i = 0; i < Image.fileNames.length; i++) {
-  new Image(Image.fileNames[i]);
+function makeInstances() {
+  for (var i = 0; i < Image.fileNames.length; i++) {
+    new Image(Image.fileNames[i]);
+  }
 }
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // FUNCTION DECLARATIONS
 // Ordered with a stepdown approach. Higher level functions are on top and lower levels below.
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// CHECKS IF THERE IS LOCAL DATA WITH PREVIOUS RESULTS
+function getState() {
+  if (Image.parsedImages === null) {
+    console.log('Image.parsedImages is null');
+    makeInstances();
+    console.log('made instances');
+    // Image.allImages = [];
+  } else {
+    console.log('Image.parsedImages is NOT null');
+    // makeInstances();
+    Image.allImages = Image.parsedImages;
+    console.log('made allImages = parsedImags');
+  }
+}
 
 // CLICK EVENT HANDLER
 function handleClick(event) {
@@ -69,6 +88,7 @@ function handleClick(event) {
     removeListeners();
     renderCompleted();
     drawChart();
+    saveState();
   }
 }
 
@@ -116,7 +136,7 @@ function updateChartArrays() {
   }
 }
 
-// BUILDS CHART
+// RENDERS CHART
 function drawChart() {
   console.log('ran drawChart()');
   updateChartArrays();
@@ -181,6 +201,11 @@ function drawChart() {
   });
 }
 
+// SAVES RESULTS TO LOCAL DATA
+function saveState() {
+  localStorage.setItem('userResults', JSON.stringify(Image.allImages));
+}
+
 // REMOVES EVENT LISTENERS
 function removeListeners() {
   console.log('ran removeListeners()');
@@ -194,6 +219,7 @@ function removeListeners() {
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // ON PAGE LOAD
+getState();
 renderImages();
 
 // CLICK EVENT LISTENERS
