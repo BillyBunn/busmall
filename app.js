@@ -11,7 +11,8 @@ var rightImgEl = document.getElementById('right');
 var allImgEls = [leftImgEl, centerImgEl, rightImgEl];
 var resultsList = document.getElementById('results');
 var clicksLeft = document.getElementById('remaining');
-var canvasEl = document.getElementById("results-chart").getContext('2d');
+var canvasEl = document.getElementById('results-chart').getContext('2d');
+var inputEl = document.getElementById('clear-data');
 
 // OBJECT CONSTRUCTOR VARIABLES
 Image.fileNames = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.jpg', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
@@ -52,9 +53,9 @@ function makeInstances() {
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // FUNCTION DECLARATIONS
-// Ordered with a stepdown approach. Higher level functions are on top and lower levels below.
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+// Ordered with a stepdown approach. Higher level functions are on top and lower levels below.
 // CLICK EVENT HANDLER
 function handleClick(event) {
   Image.totalClicks++;
@@ -91,10 +92,10 @@ function renderImages() {
 // RENDERS 'VOTING COMPLETED' CONTENT
 function renderCompleted() {
   console.log('ran renderCompleted()');
-  document.getElementById("gallery").innerHTML = "COMPLETED"; // replaces img elements with message
-  clicksLeft.innerHTML = `<span>results<span>`; // replaces remaing clicks counter
-  clicksLeft.style.marginTop = "30px";
-  clicksLeft.style.fontSize = "3vw";
+  document.getElementById('gallery').innerHTML = '<h2>COMPLETED</h2><p>Reload the page to vote again and add to the chart. Click the clear button to remove prior voting data.</p>'; // replaces img elements with message
+  clicksLeft.innerHTML = '<span>results<span>'; // replaces remaing clicks counter
+  clicksLeft.style.marginTop = '30px';
+  clicksLeft.style.fontSize = '3vw';
 }
 
 // GENERATES 3 UNIQUE RANDOM NUMBERS, EXCLUDING PREVIOUS 3
@@ -106,17 +107,6 @@ function getRandom() {
       Image.randomArray.unshift(random);
       i++;
     }
-  }
-}
-
-// UPDATES CHART DATA
-function updateChartArrays() {
-  Chart.defaults.global.defaultFontColor = '#ffffff';
-  Chart.defaults.global.defaultFontFamily = '"Roboto", sans-serif';
-  Chart.defaults.global.defaultFontSize = 14;
-  for (var i = 0; i < Image.allImages.length; i++) {
-    Image.titles[i] = Image.allImages[i].writtenName;
-    Image.clicks[i] = Image.allImages[i].clicks;
   }
 }
 
@@ -185,10 +175,30 @@ function drawChart() {
   });
 }
 
+// UPDATES CHART DATA
+function updateChartArrays() {
+  Chart.defaults.global.defaultFontColor = '#ffffff';
+  Chart.defaults.global.defaultFontFamily = '"Roboto", sans-serif';
+  Chart.defaults.global.defaultFontSize = 14;
+  Chart.defaults.global.responsive = true;
+  Chart.defaults.global.maintainAspectRatio = false;
+  for (var i = 0; i < Image.allImages.length; i++) {
+    Image.titles[i] = Image.allImages[i].writtenName;
+    Image.clicks[i] = Image.allImages[i].clicks;
+  }
+}
+
 // SAVES RESULTS TO LOCAL DATA
 function saveState() {
   localStorage.setItem('userResults', JSON.stringify(Image.allImages));
 }
+
+// CLEAR DATA EVENT LISTENER AND HANDLER
+inputEl.addEventListener("click", function () {
+  event.preventDefault(); // Prevents page reload on a 'submit' event
+  localStorage.clear();
+  console.log('cleared local storage');
+});
 
 // REMOVES EVENT LISTENERS
 function removeListeners() {
